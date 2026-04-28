@@ -62,7 +62,9 @@ export interface TeamMember {
   sector: string;
   active: boolean;
   status?: string;
-  performanceScore?: number;
+  performance_score?: number;
+  performanceScore?: number; // Keep for backward compatibility if needed
+  tasks?: number;
 }
 
 export interface OperationalReport {

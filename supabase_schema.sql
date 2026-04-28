@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.team_members (
     active BOOLEAN DEFAULT true,
     status TEXT DEFAULT 'Ativo',
     performance_score INTEGER DEFAULT 100,
+    tasks INTEGER DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -37,22 +38,22 @@ CREATE TABLE IF NOT EXISTS public.demands (
 ALTER TABLE public.team_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.demands ENABLE ROW LEVEL SECURITY;
 
--- 5. POLÍTICAS DE ACESSO (Padrão para usuários autenticados)
--- Nota: Para Produção, refine estas políticas conforme sua estrutura de permissões.
+-- 5. POLÍTICAS DE ACESSO (Permitindo ANON e AUTHENTICATED para facilitar prototipagem rápida)
+-- NOTA: Em produção real, restrinja apenas para 'authenticated'.
 
 -- Políticas para team_members
-CREATE POLICY "Acesso Total para Usuários Autenticados" 
+CREATE POLICY "Permitir Acesso Público" 
 ON public.team_members FOR ALL 
-TO authenticated 
+TO anon, authenticated 
 USING (true);
 
 -- Políticas para demands
-CREATE POLICY "Acesso Total para Usuários Autenticados" 
+CREATE POLICY "Permitir Acesso Público" 
 ON public.demands FOR ALL 
-TO authenticated 
+TO anon, authenticated 
 USING (true);
 
--- 6. TRIGGERS PARA UPDATED_AT (Opcional, mantém os timestamps sincronizados)
+-- 6. TRIGGERS PARA UPDATED_AT
 CREATE OR REPLACE FUNCTION handle_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -61,11 +62,14 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+-- Remover se existirem para evitar erro de duplicata
+DROP TRIGGER IF EXISTS update_team_members_updated_at ON public.team_members;
 CREATE TRIGGER update_team_members_updated_at
     BEFORE UPDATE ON public.team_members
     FOR EACH ROW
     EXECUTE PROCEDURE handle_updated_at();
 
+DROP TRIGGER IF EXISTS update_demands_updated_at ON public.demands;
 CREATE TRIGGER update_demands_updated_at
     BEFORE UPDATE ON public.demands
     FOR EACH ROW

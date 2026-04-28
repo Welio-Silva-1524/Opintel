@@ -55,8 +55,11 @@ export default function TeamManager() {
         .order('name');
       
       if (error) throw error;
-      setTeam(data || []);
-    } catch (err) {
+      setTeam((data || []).map(m => ({
+        ...m,
+        performanceScore: m.performance_score 
+      })));
+    } catch (err: any) {
       console.error('Error fetching team:', err);
     } finally {
       setIsLoading(false);
@@ -95,9 +98,9 @@ export default function TeamManager() {
       setIsModalOpen(false);
       setMemberToEdit(null);
       setFormData({ name: '', role: '', sector: '', active: true });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error saving member:', err);
-      alert('Erro ao salvar colaborador.');
+      alert(`Erro ao salvar colaborador: ${err.message || 'Erro desconhecido'}`);
     } finally {
       setIsSaving(false);
     }
