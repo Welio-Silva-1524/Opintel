@@ -1,0 +1,77 @@
+{
+  "entities": {
+    "Demand": {
+      "title": "Demanda Operacional",
+      "description": "Registro de uma demanda ou chamado operacional.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDENTE", "EM_ANDAMENTO", "FINALIZADO", "URGENTE"] },
+        "priority": { "type": "string", "enum": ["BAIXA", "MEDIA", "ALTA", "CRITICA"] },
+        "sector": { "type": "string" },
+        "teamId": { "type": "string" },
+        "assignedTo": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "deadline": { "type": "string", "format": "date-time" },
+        "protocol": { "type": "string" },
+        "evidences": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["title", "status", "priority", "protocol"]
+    },
+    "Evidência": {
+      "title": "Evidência Operacional",
+      "description": "Fotos, documentos ou registros vinculados a uma demanda ou ponto.",
+      "type": "object",
+      "properties": {
+        "demandId": { "type": "string" },
+        "type": { "type": "string" },
+        "url": { "type": "string" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Activity": {
+      "title": "Atividade de Agenda",
+      "description": "Tarefas, inspeções ou visitas agendadas.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "type": { "type": "string", "enum": ["TAREFA", "INSPECAO", "VISITA"] },
+        "date": { "type": "string", "format": "date-time" },
+        "status": { "type": "string" },
+        "assigneeId": { "type": "string" }
+      }
+    },
+    "TeamMember": {
+      "title": "Colaborador",
+      "description": "Dados do colaborador e produtividade.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "sector": { "type": "string" },
+        "active": { "type": "boolean" }
+      }
+    }
+  },
+  "firestore": {
+    "/demands": {
+      "schema": "Demand",
+      "description": "Coleção central de demandas e chamados."
+    },
+    "/demands/{demandId}/evidences": {
+      "schema": "Evidência",
+      "description": "Evidências vinculadas a uma demanda específica."
+    },
+    "/activities": {
+      "schema": "Activity",
+      "description": "Calendário de atividades operacionais."
+    },
+    "/team": {
+      "schema": "TeamMember",
+      "description": "Cadastro de colaboradores."
+    }
+  }
+}
