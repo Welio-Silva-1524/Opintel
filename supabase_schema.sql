@@ -41,11 +41,19 @@ ALTER TABLE public.demands ENABLE ROW LEVEL SECURITY;
 -- 5. POLÍTICAS DE ACESSO (Permitindo ANON e AUTHENTICATED para facilitar prototipagem rápida)
 -- NOTA: Em produção real, restrinja apenas para 'authenticated'.
 
+-- Remover políticas antigas se existirem
+DROP POLICY IF EXISTS "Permitir Acesso Público" ON public.team_members;
+DROP POLICY IF EXISTS "Acesso Total para Usuários Autenticados" ON public.team_members;
+
 -- Políticas para team_members
 CREATE POLICY "Permitir Acesso Público" 
 ON public.team_members FOR ALL 
 TO anon, authenticated 
 USING (true);
+
+-- Remover políticas antigas se existirem
+DROP POLICY IF EXISTS "Permitir Acesso Público" ON public.demands;
+DROP POLICY IF EXISTS "Acesso Total para Usuários Autenticados" ON public.demands;
 
 -- Políticas para demands
 CREATE POLICY "Permitir Acesso Público" 
